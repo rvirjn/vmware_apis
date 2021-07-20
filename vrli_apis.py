@@ -14,10 +14,10 @@ nsxt_ip, nsxt_user, nsxt_pwd = '', '', ''
 vc_ip, vc_user, vc_pwd = "", '', ""
 
 
-VSPHERE = ''
-VSPHERE_TESTCONNECTION = ''
-VROPS = ''
-VROPS_TESTCONNECTION = ''
+VSPHERE = "https://{ip}/api/v1/vsphere"
+VROPS = "https://{ip}/api/v1/vrops"
+VSPHERE_TESTCONNECTION = "https://{ip}/api/v1/vsphere/testconnection"
+VROPS_TESTCONNECTION = "https://{ip}/api/v1/vrops/testconnection"
 
 sessionId = None
 VRLI_SESSIONS = ''
