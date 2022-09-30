@@ -80,6 +80,7 @@ class Util:
                             "workload_json": [
                                 "%s" % input_arg.get('workload_json'),
                             ],
+                            "setup_json": input_arg.get('interarc-setup-mgmt-json'),
                             "jump_host": {
                                 "linux_jump": {
                                     "ipaddress": input_arg.get('linux_jump'),
@@ -99,7 +100,7 @@ class Util:
                             "operation": "MiscExecuteGoatCommand",
                             "product": "misc",
                             "product-identifier": "MGMT",
-                            "rst_command": input_arg.get('rst_command')
+                            "rst_command": "./rst -i %s" % input_arg.get('file_path')
                         }
                     ]
                 }

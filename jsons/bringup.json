@@ -1,0 +1,375 @@
+{
+   "nsxtSpec" : {
+      "transportVlanId" : 1521,
+      "nsxtAdminPassword" : "VMware123!VMware123!",
+      "nsxtLicense" : "MM4L3-DLL93-789CT-0LA26-0WW57",
+      "nsxtManagerSize" : "medium",
+      "sshEnabledForNsxtManager" : "true",
+      "overLayTransportZone" : {
+         "zoneName" : "overlay-tz",
+         "switchName" : "mgmt-nvds",
+         "networkName" : "net-overlay"
+      },
+      "vipFqdn" : "nsxManager",
+      "rootNsxtManagerPassword" : "VMware123!VMware123!",
+      "nsxtManagers" : [
+         {
+            "ip" : "172.18.174.11",
+            "hostname" : "nsxt-mgmt-1"
+         },
+         {
+            "ip" : "172.18.174.12",
+            "hostname" : "nsxt-mgmt-2"
+         },
+         {
+            "ip" : "172.18.174.13",
+            "hostname" : "nsxt-mgmt-3"
+         }
+      ],
+      "nsxtAuditPassword" : "VMware123!VMware123!",
+      "vip" : "172.18.174.9",
+      "rootLoginEnabledForNsxtManager" : "true",
+      "vlanTransportZone" : {
+         "zoneName" : "vlan-tz",
+         "switchName" : "mgmt-nvds",
+         "networkName" : "net-vlan"
+      }
+   },
+   "excludedComponents" : [
+      "NSX-V",
+      "LogInsight",
+      "AVN"
+   ],
+   "dvsSpecs" : [
+      {
+         "vmnics" : [
+            "vmnic4",
+            "vmnic5"
+         ],
+         "networks" : [
+            "MANAGEMENT",
+            "VSAN",
+            "VMOTION"
+         ],
+         "dvsName" : "SDDC-Dswitch-Private",
+         "niocSpecs" : [
+            {
+               "value" : "HIGH",
+               "trafficType" : "VSAN"
+            },
+            {
+               "value" : "LOW",
+               "trafficType" : "VMOTION"
+            },
+            {
+               "value" : "LOW",
+               "trafficType" : "VDP"
+            },
+            {
+               "value" : "HIGH",
+               "trafficType" : "VIRTUALMACHINE"
+            },
+            {
+               "value" : "NORMAL",
+               "trafficType" : "MANAGEMENT"
+            },
+            {
+               "value" : "LOW",
+               "trafficType" : "NFS"
+            },
+            {
+               "value" : "LOW",
+               "trafficType" : "HBR"
+            },
+            {
+               "value" : "LOW",
+               "trafficType" : "FAULTTOLERANCE"
+            },
+            {
+               "value" : "LOW",
+               "trafficType" : "ISCSI"
+            }
+         ],
+         "mtu" : 9000
+      }
+   ],
+   "dnsSpec" : {
+      "secondaryNameserver" : "172.18.174.190",
+      "domain" : "rainpole.local",
+      "subdomain" : "rainpole.local",
+      "nameserver" : "172.18.174.190"
+   },
+   "clusterSpec" : {
+      "resourcePoolSpecs" : [
+         {
+            "cpuLimit" : -1,
+            "memoryReservationPercentage" : 0,
+            "memoryLimit" : -1,
+            "name" : "sfo01-m01-sddc-mgmt",
+            "cpuSharesLevel" : "high",
+            "memorySharesLevel" : "normal",
+            "cpuSharesValue" : 0,
+            "memorySharesValue" : 0,
+            "cpuReservationPercentage" : 0,
+            "cpuReservationExpandable" : true,
+            "type" : "management",
+            "memoryReservationExpandable" : true
+         },
+         {
+            "cpuLimit" : -1,
+            "memoryReservationPercentage" : 0,
+            "memoryLimit" : -1,
+            "name" : "Network-ResourcePool",
+            "cpuSharesLevel" : "high",
+            "memorySharesLevel" : "normal",
+            "cpuSharesValue" : 0,
+            "memorySharesValue" : 0,
+            "cpuReservationPercentage" : 0,
+            "cpuReservationExpandable" : true,
+            "type" : "network",
+            "memoryReservationExpandable" : true
+         },
+         {
+            "cpuLimit" : -1,
+            "memoryReservationPercentage" : 0,
+            "memoryLimit" : -1,
+            "name" : "Compute-ResourcePool",
+            "cpuSharesLevel" : "normal",
+            "memorySharesLevel" : "normal",
+            "cpuSharesValue" : 0,
+            "memorySharesValue" : 0,
+            "cpuReservationPercentage" : 0,
+            "cpuReservationExpandable" : true,
+            "type" : "compute",
+            "memoryReservationExpandable" : true
+         },
+         {
+            "memoryLimit" : -1,
+            "memoryReservationPercentage" : 0,
+            "cpuLimit" : -1,
+            "cpuSharesLevel" : "normal",
+            "name" : "User-RP",
+            "memorySharesLevel" : "normal",
+            "memorySharesValue" : 0,
+            "cpuReservationPercentage" : 0,
+            "cpuReservationExpandable" : true,
+            "cpuSharesValue" : 0,
+            "type" : "compute",
+            "memoryReservationExpandable" : true
+         }
+      ],
+      "clusterName" : "SDDC-Cluster1",
+      "hostFailuresToTolerate" : 1,
+      "clusterEvcMode" : ""
+   },
+   "vsanSpec" : {
+      "licenseFile" : "000JK-G5L9P-W8289-09CK6-19913",
+      "datastoreName" : "sfo01-m01-vsan",
+      "vsanName" : "vsan-1"
+   },
+   "ceipEnabled" : false,
+   "dvSwitchVersion" : "7.0.0",
+   "pscSpecs" : [
+      {
+         "adminUserSsoPassword" : "VMware123!",
+         "vcenterId" : "vcenter-1",
+         "pscSsoSpec" : {
+            "isJoinSsoDomain" : false,
+            "ssoDomain" : "vsphere.local",
+            "ssoSiteName" : "vmwvcf2",
+            "ssoDomainPassword" : "VMware123!"
+         },
+         "pscId" : "psc-1"
+      }
+   ],
+   "sddcId" : "sddcId-1001",
+   "taskName" : "workflowconfig/workflowspec-ems.json",
+   "sddcManagerSpec" : {
+      "secondUserCredentials" : {
+         "password" : "VMware123!",
+         "username" : "vcf"
+      },
+      "rootUserCredentials" : {
+         "password" : "VMware123!",
+         "username" : "root"
+      },
+      "ipAddress" : "172.18.174.5",
+      "hostname" : "sddc-manager",
+      "netmask" : "255.255.255.0",
+      "restApiCredentials" : {
+         "password" : "VMware123!",
+         "username" : "admin"
+      }
+   },
+   "networkSpecs" : [
+      {
+         "standbyUplinks" : [],
+         "networkType" : "MANAGEMENT",
+         "gateway" : "172.18.174.253",
+         "vlanId" : "1520",
+         "portGroupKey" : "SDDC-DPortGroup-Mgmt",
+         "activeUplinks" : [
+            "uplink1",
+            "uplink2"
+         ],
+         "association" : "SDDC-Datacenter",
+         "teamingPolicy" : "loadbalance_srcid",
+         "subnet" : "172.18.174.0/24",
+         "mtu" : "1500"
+      },
+      {
+         "standbyUplinks" : [],
+         "networkType" : "VSAN",
+         "gateway" : "172.18.177.1",
+         "vlanId" : "1523",
+         "includeIpAddressRanges" : [
+            {
+               "endIpAddress" : "172.18.177.140",
+               "startIpAddress" : "172.18.177.11"
+            }
+         ],
+         "portGroupKey" : "SDDC-DPortGroup-VSAN",
+         "activeUplinks" : [
+            "uplink1",
+            "uplink2"
+         ],
+         "teamingPolicy" : "loadbalance_loadbased",
+         "association" : "SDDC-Datacenter",
+         "subnet" : "172.18.177.0/24",
+         "mtu" : "9000"
+      },
+      {
+         "standbyUplinks" : [],
+         "networkType" : "VMOTION",
+         "gateway" : "172.18.176.1",
+         "vlanId" : "1522",
+         "includeIpAddressRanges" : [
+            {
+               "endIpAddress" : "172.18.176.140",
+               "startIpAddress" : "172.18.176.11"
+            }
+         ],
+         "portGroupKey" : "SDDC-DPortGroup-vMotion",
+         "activeUplinks" : [
+            "uplink1",
+            "uplink2"
+         ],
+         "teamingPolicy" : "loadbalance_loadbased",
+         "association" : "SDDC-Datacenter",
+         "subnet" : "172.18.176.0/24",
+         "mtu" : "9000"
+      }
+   ],
+   "skipEsxThumbprintValidation" : true,
+   "esxLicense" : "NM4HK-FQJ01-H8021-0R1H6-38V4P",
+   "ntpServers" : [
+      "172.18.174.251"
+   ],
+   "vcenterSpec" : {
+      "vmSize" : "small",
+      "rootVcenterPassword" : "VMware123!",
+      "licenseFile" : "544TH-FUK81-48941-0C3HK-843NP",
+      "vcenterIp" : "172.18.174.6",
+      "vcenterHostname" : "vcenter-1"
+   },
+   "managementPoolName" : "bringup-networkpool",
+   "hostSpecs" : [
+      {
+         "serverId" : "host-1",
+         "vSwitch" : "vSwitch0",
+         "association" : "SDDC-Datacenter",
+         "hostname" : "esx-1",
+         "credentials" : {
+            "password" : "EvoSddc!2016",
+            "username" : "root"
+         },
+         "ipAddressPrivate" : {
+            "gateway" : "172.18.174.253",
+            "ipAddress" : "172.18.174.100",
+            "cidr" : "172.18.174.0/24",
+            "subnet" : "255.255.255.0"
+         }
+      },
+      {
+         "serverId" : "host-3",
+         "vSwitch" : "vSwitch0",
+         "association" : "SDDC-Datacenter",
+         "hostname" : "esx-3",
+         "credentials" : {
+            "password" : "EvoSddc!2016",
+            "username" : "root"
+         },
+         "ipAddressPrivate" : {
+            "gateway" : "172.18.174.253",
+            "ipAddress" : "172.18.174.102",
+            "cidr" : "172.18.174.0/24",
+            "subnet" : "255.255.255.0"
+         }
+      },
+      {
+         "serverId" : "host-4",
+         "vSwitch" : "vSwitch0",
+         "association" : "SDDC-Datacenter",
+         "hostname" : "esx-4",
+         "credentials" : {
+            "password" : "EvoSddc!2016",
+            "username" : "root"
+         },
+         "ipAddressPrivate" : {
+            "gateway" : "172.18.174.253",
+            "ipAddress" : "172.18.174.103",
+            "cidr" : "172.18.174.0/24",
+            "subnet" : "255.255.255.0"
+         }
+      },
+      {
+         "serverId" : "host-6",
+         "vSwitch" : "vSwitch0",
+         "association" : "SDDC-Datacenter",
+         "hostname" : "esx-6",
+         "credentials" : {
+            "password" : "EvoSddc!2016",
+            "username" : "root"
+         },
+         "ipAddressPrivate" : {
+            "gateway" : "172.18.174.253",
+            "ipAddress" : "172.18.174.105",
+            "cidr" : "172.18.174.0/24",
+            "subnet" : "255.255.255.0"
+         }
+      },
+      {
+         "serverId" : "host-7",
+         "vSwitch" : "vSwitch0",
+         "association" : "SDDC-Datacenter",
+         "hostname" : "esx-7",
+         "credentials" : {
+            "password" : "EvoSddc!2016",
+            "username" : "root"
+         },
+         "ipAddressPrivate" : {
+            "gateway" : "172.18.174.253",
+            "ipAddress" : "172.18.174.106",
+            "cidr" : "172.18.174.0/24",
+            "subnet" : "255.255.255.0"
+         }
+      },
+      {
+         "serverId" : "host-7",
+         "vSwitch" : "vSwitch0",
+         "association" : "SDDC-Datacenter",
+         "hostname" : "esx-8",
+         "credentials" : {
+            "password" : "EvoSddc!2016",
+            "username" : "root"
+         },
+         "ipAddressPrivate" : {
+            "gateway" : "172.18.174.253",
+            "ipAddress" : "172.18.174.107",
+            "cidr" : "172.18.174.0/24",
+            "subnet" : "255.255.255.0"
+         }
+      }
+   ]
+}
+

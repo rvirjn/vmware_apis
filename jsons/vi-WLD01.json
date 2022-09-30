@@ -1,0 +1,141 @@
+{
+    "domainName": "WLD01-vSAN",
+    "orgName": "VMware",
+    "vcenterSpec": {
+        "name": "wld01-vcenter",
+        "networkDetailsSpec": {
+            "ipAddress": "172.18.174.43",
+            "dnsName": "wld01-vcenter.rainpole.local",
+            "gateway": "172.18.174.253",
+            "subnetMask": "255.255.255.0"
+        },
+        "licenseKey": "544TH-FUK81-48941-0C3HK-843NP",
+        "rootPassword": "VMware123!",
+        "datacenterName": "WLD01-DC"
+    },
+    "computeSpec": {
+        "clusterSpecs": [
+            {
+                "name": "WLD01-cluster01",
+                "hostSpecs": [
+                    {
+                        "id": "172.18.174.107",
+                        "licenseKey": "454RL-EMDDK-88LR9-0NLRP-GN762",
+                        "hostNetworkSpec": {
+                            "vmNics": [
+                                {
+                                    "id": "vmnic4",
+                                    "vdsName": "WLD01-vCenter-cluster01-vds01"
+                                },
+                                {
+                                    "id": "vmnic5",
+                                    "vdsName": "WLD01-vCenter-cluster01-vds01"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "id": "172.18.174.108",
+                        "licenseKey": "454RL-EMDDK-88LR9-0NLRP-GN762",
+                        "hostNetworkSpec": {
+                            "vmNics": [
+                                {
+                                    "id": "vmnic4",
+                                    "vdsName": "WLD01-vCenter-cluster01-vds01"
+                                },
+                                {
+                                    "id": "vmnic5",
+                                    "vdsName": "WLD01-vCenter-cluster01-vds01"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "id": "172.18.174.109",
+                        "licenseKey": "454RL-EMDDK-88LR9-0NLRP-GN762",
+                        "hostNetworkSpec": {
+                            "vmNics": [
+                                {
+                                    "id": "vmnic4",
+                                    "vdsName": "WLD01-vCenter-cluster01-vds01"
+                                },
+                                {
+                                    "id": "vmnic5",
+                                    "vdsName": "WLD01-vCenter-cluster01-vds01"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "datastoreSpec": {
+                    "vsanDatastoreSpec": {
+                        "failuresToTolerate": 0,
+                        "licenseKey": "000JK-G5L9P-W8289-09CK6-19913",
+                        "datastoreName": "WLD01-vCenter-cluster01-vsan01"
+                    }
+                },
+                "networkSpec": {
+                    "vdsSpecs": [
+                        {
+                            "name": "WLD01-vCenter-cluster01-vds01",
+                            "portGroupSpecs": [
+                                {
+                                    "name": "WLD01-vCenter-cluster01-vds01-management",
+                                    "transportType": "MANAGEMENT"
+                                },
+                                {
+                                    "name": "WLD01-vCenter-cluster01-vds01-vsan",
+                                    "transportType": "VSAN"
+                                },
+                                {
+                                    "name": "WLD01-vCenter-cluster01-vds01-vmotion",
+                                    "transportType": "VMOTION"
+                                }
+                            ]
+                        }
+                    ],
+                    "nsxClusterSpec": {
+                        "nsxTClusterSpec": {
+                            "geneveVlanId": 1521
+                        }
+                    }
+                }
+            }
+        ]
+    },
+    "nsxTSpec": {
+        "nsxManagerSpecs": [
+            {
+                "name": "wld01-nsx01",
+                "networkDetailsSpec": {
+                    "ipAddress": "172.18.174.62",
+                    "dnsName": "wld01-nsx01.rainpole.local",
+                    "gateway": "172.18.174.253",
+                    "subnetMask": "255.255.255.0"
+                }
+            },
+            {
+                "name": "wld01-nsx02",
+                "networkDetailsSpec": {
+                    "ipAddress": "172.18.174.63",
+                    "dnsName": "wld01-nsx02.rainpole.local",
+                    "gateway": "172.18.174.253",
+                    "subnetMask": "255.255.255.0"
+                }
+            },
+            {
+                "name": "wld01-nsx03",
+                "networkDetailsSpec": {
+                    "ipAddress": "172.18.174.64",
+                    "dnsName": "wld01-nsx03.rainpole.local",
+                    "gateway": "172.18.174.253",
+                    "subnetMask": "255.255.255.0"
+                }
+            }
+        ],
+        "vip": "172.18.174.66",
+        "vipFqdn": "wld01-nsx.rainpole.local",
+        "licenseKey": "MM4L3-DLL93-789CT-0LA26-0WW57",
+        "nsxManagerAdminPassword": "EvoSddc!2016"
+    }
+}
