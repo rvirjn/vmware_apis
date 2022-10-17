@@ -57,40 +57,48 @@ class Util:
         # Bridge : A UF Server which use to trigger VMware automation
         url = 'http://10.199.28.90:4100/cwp/v1/job/ucValidator/validate_input'
         workload_json = input_arg.get('workload_json')
-        if workload_json:
-            input_arg['workload_json'] = ''
+        if not workload_json:
+            # TODO remove the hard code
+            workload_json = "http://sc-dbc2154.eng.vmware.com/raviranjan/jsons/ravik_json/vi-WLD01.json"
+        bringup_json = input_arg.get('bringup-json')
+        if 'http' not in bringup_json:
+            # TODO remove the hard code sc-dbc2154
+            bringup_json = bringup_json.replace('/dbc/sc-dbc2154/', 'http://sc-dbc2154.eng.vmware.com/')
+        setup_json = input_arg.get('interarc-setup-mgmt-json')
+        if 'http' not in setup_json:
+            # TODO remove the hard code sc-dbc2154
+            setup_json = setup_json.replace('/dbc/sc-dbc2154/', 'http://sc-dbc2154.eng.vmware.com/')
+        _x_args = " ".join(sys.argv)
+        _x_args = _x_args.split('.py')[1]
         json_payload = {
-            {
                 "JOB": {
                     "job_Owner": "avi@vmware.com",
                     "inventory_version": "v2",
                     "job_Tag": "avi_rst",
                     "halt_on_Coredump": "no",
                     "abort_job_on_failure": "yes",
-                    "skip_env_prep": "no",
+                    "skip_env_prep": "yes",
                     "skip_vcheck": "yes",
                     "testbed": {
                         "Product": [
-                            "vcenter",
+                            "vsphere",
                             "vcf",
                             "nsx"
                         ],
                         "testbed_json": {
-                            "bringup_json": "%s" % input_arg.get('bringup-json'),
-                            "workload_json": [
-                                "%s" % input_arg.get('workload_json'),
-                            ],
-                            "setup_json": input_arg.get('interarc-setup-mgmt-json'),
+                            "bringup_json": bringup_json.strip(),
+                            "workload_json": [ workload_json.strip()],
+                            "setup_json": setup_json.strip(),
                             "jump_host": {
                                 "linux_jump": {
-                                    "ipaddress": input_arg.get('linux_jump'),
-                                    "username": input_arg.get('linux_jump_username'),
-                                    "password": input_arg.get('linux_jump_password')
+                                    "ipaddress": input_arg.get('linux_jump').strip(),
+                                    "username": input_arg.get('linux_jump_username').strip(),
+                                    "password": input_arg.get('linux_jump_password').strip()
                                 },
                                 "windows_jump": {
-                                    "ipaddress": input_arg.get('linux_jump'),
-                                    "username": input_arg.get('linux_jump_username'),
-                                    "password": input_arg.get('linux_jump_password')
+                                    "ipaddress": input_arg.get('linux_jump').strip(),
+                                    "username": input_arg.get('linux_jump_username').strip(),
+                                    "password": input_arg.get('linux_jump_password').strip()
                                 }
                             }
                         }
@@ -98,14 +106,13 @@ class Util:
                     "operations": [
                         {
                             "operation": "MiscExecuteGoatCommand",
-                            "product": "misc",
+                            "product": "vcenter",
                             "product-identifier": "MGMT",
-                            "rst_command": "./rst -i %s" % input_arg.get('file_path')
+                            "rst_command": "./rst -i %s %s" % (input_arg.get('file_path').strip(), _x_args)
                         }
                     ]
                 }
             }
-        }
         try:
             response = self.rest.put(url, json_payload, self.headers, 200, is_json=True)
             put_status = response.status_code
@@ -114,9 +121,10 @@ class Util:
                 put_status)
             root = json.loads(response.text)
             status = root['status']
-            job_id = root['job_id']
-            report_location = root['report_location']
-            print(report_location)
+            if status == 'PASS':
+                status = 'Execution Started'
+            print(root)
+            print("Job will run here http://vcf-jenkins-main.eng.vmware.com:8080/view/cwp/job/cwp/job/CWP-GOAT/ or http://10.172.90.143:8080/job/cwp/job/CWP-GOAT/")
         except Exception as e:
             print(traceback.format_exc())
             print(

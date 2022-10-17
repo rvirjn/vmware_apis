@@ -1,13 +1,14 @@
 
 from util import Util
 
-__author__ = 'raviranjan'
+__author__ = 'rkottapalli'
 
 
 class VC(object):
     def __init__(self):
         self. util_obj= Util()
         self.input_arg = self.util_obj.get_sys_argsv_in_dict()
+        print(self.input_arg)
 
 
     def deploy_vc(self):
@@ -26,6 +27,7 @@ class VC(object):
 if __name__ == "__main__":
     vc_obj = VC()
     vc_obj.deploy_vc()
+
 
 """
 How to Run
@@ -54,5 +56,5 @@ optional args
 
 -x workload_json=
 
-Example: python3 deploy_vc.py -x buildnumber=20395099 -x bringup-json=jsons/bringup.json -x interarc-setup-mgmt-json=jsons/setup_details.json
+Example: python3 deploy_vc.py -x buildnumber=20395099 -x bringup-json=/dbc/jsons/bringup.json -x interarc-setup-mgmt-json=/dbc/sons/setup_details.json
 """
