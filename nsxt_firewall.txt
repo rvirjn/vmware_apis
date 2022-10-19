@@ -1,0 +1,342 @@
+
+Task Steps:
+----------------------------
+1) Connect to NSX VIP
+2) to create FW: 
+3) identify policy name: xxx
+4)identify source group name (query using user requested ips)
+5)identify dest group name (query using user requested ips)
+6) service group name (query based on port TCP/UDP XXX)
+7)Apply to a given to segment
+8) FW logging to be ENABLED
+
+
+
+Solutions:
+----------------------
+Let take an example
+
+NSXT VIP = wld01-nsx.local
+NSXT User name = admin
+NSXT Password = password
+
+
+Step 1) Connect to NSXT VIP
+
+	Shell command :  curl -i -v -k -u ‘admin:password' -H "accept: application/json" -H "Content-Type: applicaion/json" -X GET  https://wld01-nsx.local/api/v1/node/version
+	Output: {"node_version": "3.1.3.7.1.19566741", "product_version": "3.1.3.7.1.19566740”}
+
+
+Step 2) to create FW
+	This create firewall will go at last step i.e step 8
+
+	
+
+
+Step 3) Identify policy name: XXX
+	Lets take an example XXX=Default Layer3 Section and type=LAYER3
+
+	Shell command :  curl -i -v -k -u ‘admin:password' -H "accept: application/json" -H "Content-Type: applicaion/json" -X GET  https://wld01-nsx.local/api/v1/firewall/sections?type=LAYER3
+Output: 
+
+{
+	"results": [{
+		"locked": false,
+		"comments": "Default section unlock comment",
+		"lock_modified_by": "system",
+		"lock_modified_time": 1649299270617,
+		"autoplumbed": false,
+		"enforced_on": "VIF",
+		"priority": 9223372036854774807,
+		"tcp_strict": false,
+		"category": "Default",
+		"resource_type": "FirewallSection",
+		"id": "ffffffff-35f8-4611-a40f-545432e3119a",
+		"display_name": "Default Layer2 Section",
+		"description": "default.default-layer2-section",
+		"tags": [{
+			"scope": "policyPath",
+			"tag": "/infra/domains/default/security-policies/default-layer2-section"
+		}],
+		"section_type": "LAYER2",
+		"stateful": false,
+		"rule_count": 1,
+		"is_default": true,
+		"_create_user": "system",
+		"_create_time": 1649299270615,
+		"_last_modified_user": "nsx_policy",
+		"_last_modified_time": 1649299505148,
+		"_system_owned": false,
+		"_protection": "NOT_PROTECTED",
+		"_revision": 2
+	}],
+	"result_count": 1,
+	"sort_by": "position"
+}
+
+Step 4) Identify Source group Name:
+Lets take an example  user requested ip=10.12.3.64 Then using below api you can add logic to filter ip from output
+
+Shell command: curl -i -v -k -u ‘admin:password' -H "accept: application/json" -H "Content-Type: applicaion/json" -X GET  https://wld01-nsx.local/policy/api/v1/infra/domains/default/groups
+Output:
+{
+	"results": [{
+		"expression": [{
+			"ip_addresses": ["11.12.2.0/24", "11.12.3.64/26"],
+			"resource_type": "IPAddressExpression",
+			"id": "678311af-8b92-4b63-8b0a-0e1c6b4edcf4",
+			"path": "/infra/domains/default/groups/dest_group1/ip-address-expressions/678311af-8b92-4b63-8b0a-0e1c6b4edcf4",
+			"relative_path": "678311af-8b92-4b63-8b0a-0e1c6b4edcf4",
+			"parent_path": "/infra/domains/default/groups/dest_group1",
+			"marked_for_delete": false,
+			"overridden": false,
+			"_protection": "NOT_PROTECTED"
+		}],
+		"extended_expression": [],
+		"reference": false,
+		"resource_type": "Group",
+		"id": "dest_group1",
+		"display_name": "dest_group1",
+		"path": "/infra/domains/default/groups/dest_group1",
+		"relative_path": "dest_group1",
+		"parent_path": "/infra/domains/default",
+		"unique_id": "4377282b-2f5b-4589-bedb-e22e4b30a571",
+		"marked_for_delete": false,
+		"overridden": false,
+		"_create_user": "admin",
+		"_create_time": 1666153785413,
+		"_last_modified_user": "admin",
+		"_last_modified_time": 1666153785415,
+		"_system_owned": false,
+		"_protection": "NOT_PROTECTED",
+		"_revision": 0
+	}, {
+		"expression": [{
+			"ip_addresses": ["10.12.2.0/24", "10.12.3.64/26"],
+			"resource_type": "IPAddressExpression",
+			"id": "b9e1f3bd-72e9-41c2-8553-de4e4193099c",
+			"path": "/infra/domains/default/groups/source_group1/ip-address-expressions/b9e1f3bd-72e9-41c2-8553-de4e4193099c",
+			"relative_path": "b9e1f3bd-72e9-41c2-8553-de4e4193099c",
+			"parent_path": "/infra/domains/default/groups/source_group1",
+			"marked_for_delete": false,
+			"overridden": false,
+			"_protection": "NOT_PROTECTED"
+		}],
+		"extended_expression": [],
+		"reference": false,
+		"resource_type": "Group",
+		"id": "source_group1",
+		"display_name": "source_group1",
+		"description": "desc",
+		"path": "/infra/domains/default/groups/source_group1",
+		"relative_path": "source_group1",
+		"parent_path": "/infra/domains/default",
+		"unique_id": "4f5a68fd-ac1d-46fb-8520-b210203326fb",
+		"marked_for_delete": false,
+		"overridden": false,
+		"_create_user": "admin",
+		"_create_time": 1666150531484,
+		"_last_modified_user": "admin",
+		"_last_modified_time": 1666153264194,
+		"_system_owned": false,
+		"_protection": "NOT_PROTECTED",
+		"_revision": 1
+	}],
+	"result_count": 2,
+	"sort_by": "display_name",
+	"sort_ascending": true
+}
+
+Step 4.1) Suppose if you wants to create a group
+Shell Command : curl -i -v -k -u 'admin:password' -H "accept: application/json" -H "Content-Type: applicaion/json" -d @request.data.json -X PUT  https://wld01-nsx.local/policy/api/v1/infra/domains/default/groups/source_group1
+	    content of file request.data.json:
+		 { "description" : "desc", "display_name" : "source_group1" }
+	   output:
+{
+	"expression": [],
+	"extended_expression": [],
+	"reference": false,
+	"resource_type": "Group",
+	"id": "source_group1",
+	"display_name": "source_group1",
+	"description": "desc",
+	"path": "/infra/domains/default/groups/source_group1",
+	"relative_path": "source_group1",
+	"parent_path": "/infra/domains/default",
+	"unique_id": "4f5a68fd-ac1d-46fb-8520-b210203326fb",
+	"marked_for_delete": false,
+	"overridden": false,
+	"_create_user": "admin",
+	"_create_time": 1666150531484,
+	"_last_modified_user": "admin",
+	"_last_modified_time": 1666150531487,
+	"_system_owned": false,
+	"_protection": "NOT_PROTECTED",
+	"_revision": 0
+}
+	
+
+Step 5) Identify Dest group Name:
+Lets take an example  user requested ip=11.12.3.64 Then using api mentioned in step 4 you can add logic to filter ip from output
+
+
+
+
+
+Step 6) Service group Name
+	Lets take an example user request TCP with port 1024 then use below api to list all services and filter your TCP or UDP port from that 
+Shell Command : curl -i -v -k -u 'admin:password' -H "accept: application/json" -H "Content-Type: applicaion/json" -d @request.data.json -X PUT  https://wld01-nsx.local/policy/api/v1infra/services
+Output: 
+{
+	"results": [{
+			"is_default": true,
+			"service_entries": [{
+				"l4_protocol": "TCP",
+				"source_ports": [],
+				"destination_ports": ["1024"],
+				"resource_type": "L4PortSetServiceEntry",
+				"id": "AD_Server",
+				"display_name": "AD Server",
+				"path": "/infra/services/AD_Server/service-entries/AD_Server",
+				"relative_path": "AD_Server",
+				"parent_path": "/infra/services/AD_Server",
+				"unique_id": "b48fedc7-7f01-4bee-b311-f069c53d94c8",
+				"marked_for_delete": false,
+				"overridden": false,
+				"_create_user": "system",
+				"_create_time": 1649299284915,
+				"_last_modified_user": "system",
+				"_last_modified_time": 1649299284915,
+				"_system_owned": true,
+				"_protection": "NOT_PROTECTED",
+				"_revision": 0
+			}]
+		},
+		{
+			"is_default": true,
+			"service_entries": [{
+				"l4_protocol": "UDP",
+				"source_ports": [],
+				"destination_ports": ["464"],
+				"resource_type": "L4PortSetServiceEntry",
+				"id": "Active_Directory_Server_UDP",
+				"display_name": "Active Directory Server UDP",
+				"path": "/infra/services/Active_Directory_Server_UDP/service-entries/Active_Directory_Server_UDP",
+				"relative_path": "Active_Directory_Server_UDP",
+				"parent_path": "/infra/services/Active_Directory_Server_UDP",
+				"unique_id": "2d967410-a17d-4b46-8680-4f183e3ca529",
+				"marked_for_delete": false,
+				"overridden": false,
+				"_create_user": "system",
+				"_create_time": 1649299284730,
+				"_last_modified_user": "system",
+				"_last_modified_time": 1649299284730,
+				"_system_owned": true,
+				"_protection": "NOT_PROTECTED",
+				"_revision": 0
+			}],
+			"result_count": 410,
+			"sort_by": "display_name",
+			"sort_ascending": true
+		}
+	]
+}
+
+Step 7) Apply to segment
+	step 7.1) Check if segments had tags or not example lets segment name: segment_1
+Shell Command:  curl -i -v -k -u ‘admin:password' -H "accept: application/json" -H "Content-Type: applicaion/json" -X GET  https://wld01-nsx.local/policy/api/v1/infra/segments/segment_1
+Output:
+{
+	"type": "DISCONNECTED",
+	"transport_zone_path": "/infra/sites/default/enforcement-points/default/transport-zones/0e2928fb-b4cc-4adc-ac1e-078fe89816cf",
+	"advanced_config": {
+		"address_pool_paths": [],
+		"hybrid": false,
+		"inter_router": false,
+		"local_egress": false,
+		"urpf_mode": "STRICT",
+		"connectivity": "ON"
+	},
+	"admin_state": "UP",
+	"replication_mode": "MTEP",
+	"resource_type": "Segment",
+	"id": "segment_1",
+	"display_name": "segment_1",
+	"tags" : [ { "scope" : "", "tag" : "segment_tag1" } ],
+	"path": "/infra/segments/segment_1",
+	"relative_path": "segment_1",
+	"parent_path": "/infra",
+	"unique_id": "b543df62-fa4b-4fc1-9b7a-b471b074a10d",
+	"marked_for_delete": false,
+	"overridden": false,
+	"_create_user": "admin",
+	"_create_time": 1666157647066,
+	"_last_modified_user": "admin",
+	"_last_modified_time": 1666157647068,
+	"_system_owned": false,
+	"_protection": "NOT_PROTECTED",
+	"_revision": 0
+}
+
+Step 7.2) if there is no tags then use the same above api 7.1 with -X PATCH call to create tags on a given segment.
+	 Shell command:   curl -i -v -k -u ‘admin:password' -H "accept: application/json" -H "Content-Type: application/json" -d @request.data.json -X PATCH  https://wld01-nsx.local/policy/api/v1/infra/segments/segment_1
+ 	content of file request.data.json:
+	 {"tags" : [ { "scope" : "", "tag" : "segment_tag1" } ]}
+
+Step 7.3) Create a Segment group like how we had created in step 4.1.
+      Shell Command: curl -i -v -k -u ‘admin:password' -H "accept: application/json" -H "Content-Type: applicaion/json" -d @request.data.json -X PUT  https://wld01-nsx.local/policy/api/v1/infra/domains/default/groups/segment_group3      
+	content of file request.data.json:
+	{ "expression" : [ { "operator" : "EQUALS", "value" : "|segment_tag2", "member_type" : "Segment", "resource_type" : "Condition", "key" : "Tag" } ], "display_name" : "segment_group3", "description" : "desc" } 
+	Output:
+		{ "expression": [{ "member_type": "Segment", "key": "Tag", "operator": "EQUALS", "value": "|segment_tag2", "resource_type": "Condition", "id": "5c58717a-f08d-4851-a790-7a2f13e11a63", "path": "/infra/domains/default/groups/segment_group3/condition-expressions/5c58717a-f08d-4851-a790-7a2f13e11a63", "relative_path": "5c58717a-f08d-4851-a790-7a2f13e11a63", "parent_path": "/infra/domains/default/groups/segment_group3", "marked_for_delete": false, "overridden": false, "_protection": "NOT_PROTECTED" }], "extended_expression": [], "reference": false, "resource_type": "Group", "id": "segment_group3", "display_name": "segment_group3", "description": "desc", "path": "/infra/domains/default/groups/segment_group3", "relative_path": "segment_group3", "parent_path": "/infra/domains/default", "unique_id": "0c5fdb1f-932b-4d5d-bbda-0ca0984a23ed", "marked_for_delete": false, "overridden": false, "_create_user": "admin", "_create_time": 1666174590074, "_last_modified_user": "admin", "_last_modified_time": 1666174590075, "_system_owned": false, "_protection": "NOT_PROTECTED", "_revision": 0 }
+
+
+Step 8. Create firewall 
+Shell command:   curl -i -v -k -u ‘admin:password' -H "accept: application/json" -H "Content-Type: application/json" -d @request.data.json -X POST  https://wld01-nsx.local/api/v1/firewall/sections/ffffffff-8a04-4924-a5b4-54d30e81befe/rules
+ content of file request.data.json
+{
+	"display_name": "firewall_rule_2",
+	"services": [{
+		"target_id": "27874df7-9df6-4ec4-9862-fc68bb3a47c4",
+		"target_display_name": "service_1",
+		"target_type": "NSServiceGroup",
+		"is_valid": true
+	}],
+	"sources_excluded": false,
+	"destinations_excluded": false,
+	"sources": [{
+		"target_id": "4f5a68fd-ac1d-46fb-8520-b210203326fb",
+		"target_display_name": "default.source_group1",
+		"target_type": "NSGroup",
+		"is_valid": true
+	}],
+	"destinations": [{
+		"target_id": "4377282b-2f5b-4589-bedb-e22e4b30a571",
+		"target_display_name": "default.dest_group1",
+		"target_type": "NSGroup",
+		"is_valid": true
+	}],
+	"applied_tos": [{
+		"target_id": "5c58717a-f08d-4851-a790-7a2f13e11a63",
+		"target_display_name": "default.segment_group3",
+		"target_type": "NSGroup",
+		"is_valid": true
+	}],
+	"rule_tag": "",
+	"action": "ALLOW",
+	"disabled": false,
+	"logged": true,
+	"direction": "IN_OUT",
+	"ip_protocol": "IPV4_IPV6",
+	"is_default": false,
+	"_revision": 7
+}
+
+
+Please note:  
+
+> ffffffff-8a04-4924-a5b4-54d30e81befe is session id from step 3
+> 27874df7-9df6-4ec4-9862-fc68bb3a47c4 is services id from step 4 
+> 4f5a68fd-ac1d-46fb-8520-b210203326fb is sources id from step 6
+> 4377282b-2f5b-4589-bedb-e22e4b30a571 is dest id from step 5
+>5c58717a-f08d-4851-a790-7a2f13e11a63 is segment group id from step 7.3
