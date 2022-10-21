@@ -58,8 +58,7 @@ class NSXT(object):
         output = []
         status_code = None
         try:
-            response = self.rest.get(url, headers=self.headers,
-                                     auth=(self.user, self.password), log_text=False)
+            response = self.rest.get(url, headers=self.headers,auth=(self.user, self.password), log_text=False)
             status_code = response.status_code
             result = json.loads(response.text)
             # print("result %s" % result)
@@ -80,8 +79,7 @@ class NSXT(object):
         output = None
         status_code = None
         try:
-            response = self.rest.get(url, headers=self.headers,
-                                     auth=(self.user, self.password), log_text=False)
+            response = self.rest.get(url, headers=self.headers,auth=(self.user, self.password), log_text=False)
             status_code = response.status_code
             result = json.loads(response.text)
             # print("result %s" % result)
@@ -104,8 +102,7 @@ class NSXT(object):
         output = None
         status_code = None
         try:
-            response = self.rest.get(url, headers=self.headers,
-                                     auth=(self.user, self.password), log_text=True)
+            response = self.rest.get(url, headers=self.headers,auth=(self.user, self.password), log_text=False)
             status_code = response.status_code
             result = json.loads(response.text)
             # print("result %s" % result)
@@ -132,8 +129,7 @@ class NSXT(object):
         output = None
         status_code = None
         try:
-            response = self.rest.get(url, headers=self.headers,
-                                     auth=(self.user, self.password), log_text=False)
+            response = self.rest.get(url, headers=self.headers,auth=(self.user,self.password),log_text=False)
             status_code = response.status_code
             result = json.loads(response.text)
             # print("result %s" % result)
@@ -142,11 +138,15 @@ class NSXT(object):
                 service_entries = res['service_entries']
                 for service in service_entries:
                     destination_ports = service.get('destination_ports')
-                    if destination_ports and destination_ports == port:
-                        output = res['display_name']
+                    if destination_ports:
+                        for destination_port in destination_ports:
+                            if destination_port == port:
+                                output = res['display_name']
                     source_ports = service.get('source_ports')
-                    if source_ports and source_ports == port:
-                        output = res['display_name']
+                    if source_ports:
+                        for source_port in source_ports:
+                            if source_port == port:
+                                output = res['display_name']
         except Exception as e:
             print(traceback.format_exc())
             print('status code: %s' % status_code)
@@ -160,8 +160,7 @@ class NSXT(object):
         output = []
         status_code = None
         try:
-            response = self.rest.get(url, headers=self.headers,
-                                     auth=(self.user, self.password), log_text=False)
+            response = self.rest.get(url, headers=self.headers,auth=(self.user, self.password), log_text=False)
             status_code = response.status_code
             result = json.loads(response.text)
             # print("result %s" % result)
@@ -186,10 +185,10 @@ if __name__ == "__main__":
     section_id = nsx.get_policy(name='Default Layer3 Section')
     print("3. =============== output: %s" % section_id)
 
-    source_group = nsx.get_group(ip='10.12.3.64/24')
+    source_group = nsx.get_group(ip='10.12.3.64/26')
     print("4. =============== output: %s" % source_group)
 
-    dest_group = nsx.get_group(ip='11.12.3.64/24')
+    dest_group = nsx.get_group(ip='11.12.3.64/26')
     print("5. =============== output: %s" % dest_group)
 
     port = nsx.get_service_group(port='22')
