@@ -15,13 +15,12 @@ def get_sys_args_in_dict():
     print("parse sys_args:%s" % usr_command)
     keys_values = usr_command.split('-x ')
     for key_value in keys_values:
-        print("key_value: %s " % key_value)
         if not str(key_value).strip():
             continue
         k_v = key_value.split('=')
         if len(k_v) > 1:
             key, value = k_v[0], k_v[1]
-            sys_args[key] = value
+            sys_args[key.strip()] = value.strip()
         else:
             print("%s does not have = to split" % key_value)
     return sys_args
@@ -41,10 +40,10 @@ class NSXT(object):
         output = None
         status_code = None
         try:
-            response = self.rest.get(url, headers=self.headers, auth=(self.user, self.password))
+            response = self.rest.get(url, headers=self.headers, auth=(self.user, self.password), log_text=False)
             status_code = response.status_code
             result = json.loads(response.text)
-            print("result %s" % result)
+            # print("result %s" % result)
             output = result['product_version']
         except Exception as e:
             print(traceback.format_exc())
@@ -53,37 +52,21 @@ class NSXT(object):
         return output
 
     # 2. get firewall
-    def get_firewall(self):
-        url = 'https://%s/api/v1/node/version' % self.ip
+    def get_firewall(self, section_id=None):
+        url = 'https://%s/api/v1/firewall/sections/%s/rules' % (self.ip, section_id)
         data = {}
-        output = None
+        output = []
         status_code = None
         try:
             response = self.rest.get(url, headers=self.headers,
-                                     auth=(self.user, self.password))
+                                     auth=(self.user, self.password), log_text=False)
             status_code = response.status_code
             result = json.loads(response.text)
-            print("result %s" % result)
-            output = result['product_version']
-        except Exception as e:
-            print(traceback.format_exc())
-            print('status code: %s' % status_code)
-            print('Exception %s' % e)
-        return output
-
-    # 2.1 get session id
-    def get_section_id(self):
-        url = 'https://%s/api/v1/node/version' % self.ip
-        data = {}
-        output = None
-        status_code = None
-        try:
-            response = self.rest.get(url, headers=self.headers,
-                                     auth=(self.user, self.password))
-            status_code = response.status_code
-            result = json.loads(response.text)
-            print("result %s" % result)
-            output = result['product_version']
+            # print("result %s" % result)
+            result = result['results']
+            for res in result:
+                display_name = res['display_name']
+                output.append(display_name)
         except Exception as e:
             print(traceback.format_exc())
             print('status code: %s' % status_code)
@@ -98,10 +81,10 @@ class NSXT(object):
         status_code = None
         try:
             response = self.rest.get(url, headers=self.headers,
-                                     auth=(self.user, self.password))
+                                     auth=(self.user, self.password), log_text=False)
             status_code = response.status_code
             result = json.loads(response.text)
-            print("result %s" % result)
+            # print("result %s" % result)
             result = result['results']
             for res in result:
                 display_name = res['display_name']
@@ -116,23 +99,26 @@ class NSXT(object):
     #  4. identify source group name (query using user requested ips)
     #  5. identify destination group name (query using user requested ips)
     def get_group(self, ip=None):
-        url = 'https://%s/api/v1//infra/domains/default/groups' % self.ip
+        url = 'https://%s/policy/api/v1/infra/domains/default/groups' % self.ip
         data = {}
         output = None
         status_code = None
         try:
             response = self.rest.get(url, headers=self.headers,
-                                     auth=(self.user, self.password))
+                                     auth=(self.user, self.password), log_text=True)
             status_code = response.status_code
             result = json.loads(response.text)
-            print("result %s" % result)
+            # print("result %s" % result)
             result = result['results']
             for res in result:
-                expression = res.get('expression')
-                if expression:
-                    ip_addresses = expression.get('ip_addresses')
-                    if ip_addresses == ip:
-                        output = res['display_name']
+                expressions = res.get('expression')
+                if expressions:
+                    for expression in expressions:
+                        ip_addresses = expression.get('ip_addresses')
+                        if ip_addresses:
+                            for ip_ in ip_addresses:
+                                if ip_ == ip:
+                                    output = res['display_name']
         except Exception as e:
             print(traceback.format_exc())
             print('status code: %s' % status_code)
@@ -141,15 +127,16 @@ class NSXT(object):
 
     #  6. identify destination group name (query using user requested ips)
     def get_service_group(self, port=None):
-        url = 'https://%s/api/v1/infra/services' % self.ip
+        url = 'https://%s/policy/api/v1/infra/services' % self.ip
         data = {}
         output = None
         status_code = None
         try:
             response = self.rest.get(url, headers=self.headers,
-                                     auth=(self.user, self.password))
+                                     auth=(self.user, self.password), log_text=False)
             status_code = response.status_code
             result = json.loads(response.text)
+            # print("result %s" % result)
             result = result['results']
             for res in result:
                 service_entries = res['service_entries']
@@ -168,17 +155,20 @@ class NSXT(object):
 
     #  7. Apply to a given to segment
     def get_segment(self):
-        url = 'https://%s/api/v1/node/version' % self.ip
+        url = 'https://%s/policy/api/v1/infra/segments' % self.ip
         data = {}
-        output = None
+        output = []
         status_code = None
         try:
             response = self.rest.get(url, headers=self.headers,
-                                     auth=(self.user, self.password))
+                                     auth=(self.user, self.password), log_text=False)
             status_code = response.status_code
             result = json.loads(response.text)
-            print("result %s" % result)
-            output = result['product_version']
+            # print("result %s" % result)
+            result = result['results']
+            for res in result:
+                display_name = res['display_name']
+                output.append(display_name)
         except Exception as e:
             print(traceback.format_exc())
             print('status code: %s' % status_code)
@@ -193,27 +183,27 @@ if __name__ == "__main__":
     version = nsx.get_nsx_version()
     print("1. =============== output: %s" % version)
 
-    policy_id = nsx.get_policy(name='Default Layer3 Section')
-    print("3. =============== output: %s" % policy_id)
+    section_id = nsx.get_policy(name='Default Layer3 Section')
+    print("3. =============== output: %s" % section_id)
 
-    source_group = nsx.get_group(ip='10.12.3.64')
+    source_group = nsx.get_group(ip='10.12.3.64/24')
     print("4. =============== output: %s" % source_group)
 
-    dest_group = nsx.get_group(ip='11.12.3.64')
+    dest_group = nsx.get_group(ip='11.12.3.64/24')
     print("5. =============== output: %s" % dest_group)
 
-    port = nsx.get_service_group(port='1024')
+    port = nsx.get_service_group(port='22')
     print("6. =============== output: %s" % port)
 
-    port = nsx.get_service_group(port='1024')
-    print("7. =============== output: %s" % port)
+    segments = nsx.get_segment()
+    print("7. =============== output: %s" % segments)
 
-    firewall = nsx.get_firewall()
+    firewall = nsx.get_firewall(section_id)
     print("8. =============== output: %s" % firewall)
 
 
 """
 How to run
 
-pyhton nsxt_security.py -x ip= -x user= -x password= 
+python nsxt_security.py -x ip=wld01-nsx.local -x user=admin -x password=
 """
